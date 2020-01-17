@@ -14,5 +14,11 @@
  * limitations under the License.
  */
 
-rootProject.name = "COROUTINE_STUDY"
+package com.nlab.coroutine.util.core
 
+import kotlin.coroutines.CoroutineContext
+
+interface CoroutineContextProvider {
+    val main: CoroutineContext
+    val io: CoroutineContext
+}
