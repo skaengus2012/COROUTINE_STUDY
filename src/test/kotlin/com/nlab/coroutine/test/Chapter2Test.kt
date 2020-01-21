@@ -20,44 +20,41 @@ import kotlinx.coroutines.*
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 
+/**
+ * @see <a href="https://tourspace.tistory.com/151?category=797357">취소와 Timeout</a>
+ */
 class Chapter2Test {
 
     @Test fun `cancel job when 1300 ms after coroutine start`() = runCancelAndJoinLaunchTemplate {
-        launch(Dispatchers.Default) {
-            repeat(
-                times = 1000,
-                action = {
-                    println("invoke action time [$it]")
-                    delay(500)
-                }
-            )
-        }
+        repeat(
+            times = 1000,
+            action = {
+                println("invoke action time [$it]")
+                delay(500)
+            }
+        )
     }
 
     @Test fun `cancel infinite loop job using yield when 1300 ms after coroutine start`() = runCancelAndJoinLaunchTemplate {
         var nextPrintTime = System.currentTimeMillis()
-        launch(Dispatchers.Default) {
-            var i = 0
-            while (true) {
-                yield() // launch block 양보
+        var i = 0
+        while (true) {
+            yield() // launch block 양보
 
-                if (System.currentTimeMillis() >= nextPrintTime) {
-                    println("I'm sleeping ${i++} ...")
-                    nextPrintTime += 500L
-                }
+            if (System.currentTimeMillis() >= nextPrintTime) {
+                println("I'm sleeping ${i++} ...")
+                nextPrintTime += 500L
             }
         }
     }
 
     @Test fun `cancel infinite loop job using active flag when 1300 ms after coroutine start`() = runCancelAndJoinLaunchTemplate {
         var nextPrintTime = System.currentTimeMillis()
-        launch(Dispatchers.Default) {
-            var i = 0
-            while (isActive) { // active flag 체크
-                if (System.currentTimeMillis() >= nextPrintTime) {
-                    println("I'm sleeping ${i++} ...")
-                    nextPrintTime += 500L
-                }
+        var i = 0
+        while (isActive) { // active flag 체크
+            if (System.currentTimeMillis() >= nextPrintTime) {
+                println("I'm sleeping ${i++} ...")
+                nextPrintTime += 500L
             }
         }
     }
@@ -66,25 +63,21 @@ class Chapter2Test {
      * try-with-resource 에서의 finally
      */
     @Test fun `closing resource with finally when canceled coroutine`() = runCancelAndJoinLaunchTemplate {
-        launch(Dispatchers.Default) {
-            try {
-                repeat(
-                    times = 1000,
-                    action = {
-                        println("invoke action time [$it]")
-                        delay(500)
-                    }
-                )
-            } finally {
-                // use 에서도 사용 가능
-                println("I'm running finally")
-            }
+        try {
+            repeat(
+                times = 1000,
+                action = {
+                    println("invoke action time [$it]")
+                    delay(500)
+                }
+            )
+        } finally {
+            // use 에서도 사용 가능
+            println("I'm running finally")
         }
     }
 
     @Test fun `none cancellable block test in finally block`() = runBlocking {
-        // TODO 왜 inline 으로 넘겼을 시, 안되는지 확인 필요.
-        // https://github.com/Kotlin/kotlinx.coroutines/issues/1175
         val job = launch(Dispatchers.Default) {
             try {
                 repeat(
@@ -95,6 +88,8 @@ class Chapter2Test {
                     }
                 )
             } finally {
+                // inline 으로 넘겼을 시 코루틴 넘길 시, 컴파일러의 에러
+                // https://github.com/Kotlin/kotlinx.coroutines/issues/1175
                 withContext(NonCancellable) {
                     println("I'm running finally")
                     delay(1000L)
@@ -110,9 +105,9 @@ class Chapter2Test {
     }
 
     private inline fun runCancelAndJoinLaunchTemplate(
-        crossinline launchProvider: suspend CoroutineScope.() -> Job
+        crossinline action: suspend CoroutineScope.() -> Unit
     ) = runBlocking {
-        val job = launchProvider.invoke(this)
+        val job = launch(Dispatchers.Default) { action() }
 
         delay(1300)
         println("main: Now I'm tried of waiting")

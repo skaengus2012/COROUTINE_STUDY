@@ -19,6 +19,9 @@ package com.nlab.coroutine.test
 import kotlinx.coroutines.*
 import org.junit.jupiter.api.Test
 
+/**
+ * @see <a href="https://tourspace.tistory.com/150?category=797357">기본편</>
+ */
 class Chapter1Test {
 
     @Test fun `launch when delayed for 1 seconds in the GlobalScope Coroutine`() = runBlocking {
