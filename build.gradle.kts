@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import org.jetbrains.kotlin.gradle.tasks.*
+
 group = "com.nlab.coroutine"
 version = "1.0-SNAPSHOT"
 
@@ -51,8 +53,13 @@ tasks {
     compileKotlin {
         kotlinOptions.jvmTarget = "1.8"
     }
+
     compileTestKotlin {
         kotlinOptions.jvmTarget = "1.8"
+    }
+
+    withType<KotlinCompile> {
+        kotlinOptions.freeCompilerArgs += "-Xuse-experimental=kotlin.Experimental"
     }
 
     test {

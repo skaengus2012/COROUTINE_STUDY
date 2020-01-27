@@ -39,7 +39,7 @@ class Chapter2Test {
         var nextPrintTime = System.currentTimeMillis()
         var i = 0
         while (true) {
-            yield() // launch block 양보
+            yield() // launch block 양보, 주기적으로 취소를 체크하는 function 정의
 
             if (System.currentTimeMillis() >= nextPrintTime) {
                 println("I'm sleeping ${i++} ...")
