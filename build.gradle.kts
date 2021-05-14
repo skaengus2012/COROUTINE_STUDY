@@ -14,54 +14,31 @@
  * limitations under the License.
  */
 
-import org.jetbrains.kotlin.gradle.tasks.*
+plugins {
+    kotlin("jvm") version "1.5.0"
+    kotlin("kapt") version "1.5.0"
+}
 
 group = "com.nlab.coroutine"
 version = "1.0-SNAPSHOT"
-
-plugins {
-    kotlin("jvm") version "1.3.61"
-    kotlin("kapt") version "1.3.61"
-}
 
 repositories {
     mavenCentral()
 }
 
 dependencies {
-    implementation(kotlin("stdlib-jdk8"))
+    implementation(kotlin("stdlib"))
 
     // coroutine
-    implementation("org.jetbrains.kotlinx", "kotlinx-coroutines-test", "1.3.3")
-    testImplementation("org.jetbrains.kotlinx", "kotlinx-coroutines-test","1.3.3")
-
-    // dagger
-    api("com.google.dagger:dagger:2.25.4")
-    kapt("com.google.dagger:dagger-compiler:2.25.4")
-    kaptTest("com.google.dagger:dagger-compiler:2.25.4")
+    implementation("org.jetbrains.kotlinx", "kotlinx-coroutines-core", "1.5.0-RC")
 
     // junit 5
-    testImplementation("org.junit.jupiter", "junit-jupiter-api", "5.5.2")
-    testCompile("org.junit.jupiter", "junit-jupiter-params", "5.5.2")
-    testRuntime("org.junit.jupiter", "junit-jupiter-engine", "5.5.2")
-
-    // mockito
-    testImplementation("org.mockito", "mockito-core", "3.2.4")
+    testImplementation("org.junit.jupiter", "junit-jupiter-api", "5.7.1")
+    testImplementation("org.junit.jupiter", "junit-jupiter-params", "5.7.1")
+    testImplementation("org.junit.jupiter", "junit-jupiter-engine", "5.7.1")
 }
 
 tasks {
-    compileKotlin {
-        kotlinOptions.jvmTarget = "1.8"
-    }
-
-    compileTestKotlin {
-        kotlinOptions.jvmTarget = "1.8"
-    }
-
-    withType<KotlinCompile> {
-        kotlinOptions.freeCompilerArgs += "-Xuse-experimental=kotlin.Experimental"
-    }
-
     test {
         useJUnitPlatform()
     }
